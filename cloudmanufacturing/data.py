@@ -66,9 +66,7 @@ def create_excel_table(n_operations, n_suboperations, n_cities, filepath,  n_pro
         sheet.cell(row=start_oper, column=i+1).value = f"Operation{i}"
     for i in range(start_oper, n_suboperations + start_oper):
         sheet.cell(row=i+1, column=1).value = f"Sub-operation{i}"
-
-    
-    n = np.random.uniform(0.2, 0.8)   
+  
     for j in range(2, n_operations + 2):
         sub_vector = generate_vector(n_suboperations)
         for i in range(start_oper, n_suboperations + start_oper):
@@ -101,19 +99,17 @@ def create_excel_table(n_operations, n_suboperations, n_cities, filepath,  n_pro
     sheet.merge_cells(start_row=start_times-1, start_column=1, end_row=start_times-1, end_column=n_cities+1)
     sheet.cell(row=start_times-1, column=1).value = "Times Mat"
     
-    p = np.random.rand() 
     costs = [[0 for j in range(n_cities)] for i in range(n_suboperations)]
     
     for i in range(start_times, n_suboperations + start_times):
+
+        cost_vec, number_vec = generate_cost_vectors(n_cities)
+
         for j in range(2, n_cities + 2):
             
-                if random.random() < p:
-                    number = np.random.uniform(2, 10)
-                    costs[i-start_times][j-2]=np.random.uniform(20, 90)
-                else:
-                    number = 'Inf'
-                    costs[i-start_times][j-2]='Inf'
-                sheet.cell(row=i+1, column=j).value = number
+            sheet.cell(row=i+1, column=j).value = number_vec[j-2]
+            costs[i-start_times][j-2] = cost_vec[j-2]
+                
               
     start_cost = n_suboperations+start_times+4
     
@@ -143,6 +139,21 @@ def create_excel_table(n_operations, n_suboperations, n_cities, filepath,  n_pro
     # Сохраняем файл
     wb.save(filepath)
     return sheet_name
+
+def generate_cost_vectors(n):
+
+    # Генерируем случайное количество единиц в векторе
+    num_ones = random.randint(1, n-1)
+    
+    # Создаем вектор с num_ones единицами и (n - num_ones) нулями
+    vector = np.append(np.random.uniform(20, 90, (n,)),(['Inf'] * (n - num_ones)))
+    vector_2 = np.append(np.random.uniform(2, 10, (n,)),(['Inf'] * (n - num_ones)))
+    
+    # Перемешиваем элементы вектора
+    seed = random.randint(1, 100)
+    random.Random(seed).shuffle(vector)
+    random.Random(seed).shuffle(vector_2)
+    return vector, vector_2
 
 def generate_vector(n):
 
