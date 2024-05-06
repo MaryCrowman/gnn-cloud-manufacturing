@@ -1,4 +1,36 @@
 import numpy as np
+from dgl.data import DGLDataset
+
+class Dataset(DGLDataset):
+    def __init__(self, dglist, problems):
+        super().__init__(name='dataset')
+        self.dglist = dglist
+        self.problems = problems
+    
+    def __len__(self):
+        return len(self.dglist)
+    
+    def __getitem__(self, idx):
+        graph = self.dglist[idx]
+        problem = self.problems[idx]
+        return graph, idx
+    
+
+def validate(model, val_loader, dataset):
+    val_objvalue = []
+    for batch, idx in val_loader:
+        batch_objvalue = []
+        for i, graph in enumerate(dgl.unbatch(batch)):
+            problem = dataset[45+idx[i]]
+            with graph.local_scope():
+                pred_gamma = model.predict(graph, problem)
+            batch_objvalue.append(
+                objvalue(problem, pred_gamma, construct_delta(problem, pred_gamma))
+            )
+
+        val_objvalue.append(sum(batch_objvalue) / len(batch_objvalue))
+    return sum(val_objvalue)/len(val_objvalue)
+
 
 def objvalue(problem, gamma, delta):
     time_cost = problem['time_cost'] 
