@@ -1,5 +1,6 @@
 import numpy as np
 from dgl.data import DGLDataset
+import dgl
 
 class Dataset(DGLDataset):
     def __init__(self, dglist, problems):
