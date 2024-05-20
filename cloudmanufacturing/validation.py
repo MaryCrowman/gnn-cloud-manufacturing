@@ -25,6 +25,7 @@ def validate(model, val_loader, dataset):
             problem = dataset[45+idx[i]]
             with graph.local_scope():
                 pred_gamma = model.predict(graph, problem)
+                pred_gamma *= np.broadcast_to(problem['operation'][:, :, np.newaxis], pred_gamma.shape) 
             batch_objvalue.append(
                 objvalue(problem, pred_gamma, construct_delta(problem, pred_gamma))
             )
