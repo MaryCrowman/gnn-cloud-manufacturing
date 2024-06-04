@@ -22,7 +22,7 @@ def validate(model, val_loader, dataset):
     for batch, idx in val_loader:
         batch_objvalue = []
         for i, graph in enumerate(dgl.unbatch(batch)):
-            problem = dataset[45+idx[i]]
+            problem = dataset[idx[i]]
             with graph.local_scope():
                 pred_gamma = model.predict(graph, problem)
                 pred_gamma *= np.broadcast_to(problem['operation'][:, :, np.newaxis], pred_gamma.shape) 
